@@ -5,7 +5,7 @@ public sealed class BoxConfig {
  public Guid Id {get;set;}=Guid.NewGuid(); public string Name {get;set;}="新盒子";
  public string? Folder {get;set;} public List<string> Entries {get;set;}=[];
  public double X {get;set;}=80; public double Y {get;set;}=100; public double Width {get;set;}=400; public double Height {get;set;}=440;
- public bool Locked {get;set;} public string View {get;set;}="图标";
+ public double Transparency {get;set;}=40; public bool Locked {get;set;} public string View {get;set;}="图标";
 }
 public sealed class Settings {public List<BoxConfig> Boxes {get;set;}=[]; public uint Modifiers {get;set;}=3; public uint Key {get;set;}=0x42;}
 public static class Store {
@@ -24,3 +24,4 @@ public static class FileActions {
   return target;
  }
 }
+
