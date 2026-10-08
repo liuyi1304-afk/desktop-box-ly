@@ -1,16 +1,22 @@
 # Desktop Box LY
 
-Windows 11 桌面盒子管理器，原仓库中的 MVP 原型说明为：C# + WinUI 3，可配置半透明桌面盒子、映射文件夹并进行文件操作。
+Windows 11 桌面收纳盒第一版，当前版本 **v0.1.0 实验版**。
 
-目前 GitHub 初始提交里只有仓库说明和许可证，没有可恢复的应用源码或安装包。本地重建按项目分目录工作，规格草案见 [docs/重建规格草案.md](docs/重建规格草案.md)。
+直接运行 `releases/v0.1.0/DesktopBox.App.exe`，保留同目录配套文件。无需另装 .NET 或 GitHub Desktop。
 
-## Proposed first version
+- 普通盒子：虚拟文件入口，原文件位置与属性不变；指定桌面图标通过屏幕外位置实验性隐藏。
+- 映射盒子：显示真实文件夹并同步刷新；拖入移动真实文件，同名冲突拒绝覆盖。
+- 图标 / 列表 / 详细信息视图、改名、位置锁定、缩放、布局记忆、托盘与可修改的全局快捷键。
+- 删除盒子保留文件；移出普通盒子或退出恢复原图标，包含异常终止恢复助手。
 
-- Multiple movable, resizable translucent boxes.
-- Each box maps to one local folder and remembers its layout.
-- Browse, open, refresh, and reveal files in Explorer.
-- Keep file-changing actions out until their behavior is defined.
+单图标隐藏需关闭自动排列，受 Explorer 和系统变化限制。快捷键置顶不能覆盖安全桌面等所有画面。完整操作说明与验证范围见 [使用说明](releases/v0.1.0/使用说明.md) 和 [验证记录](releases/v0.1.0/验证记录.md)。
 
-## Development
+运行版源码：`src/DesktopBox.App`（C# / WPF）；原 WinUI 草架保留在 `src/DesktopBoxLY`。项目记忆见 `项目记忆.md`。
 
-The repository specifies C# and WinUI 3. The current machine does not yet have the .NET / Windows App SDK build tools, so the app cannot be compiled here until the project-local toolchain is prepared.
+## 构建
+
+```powershell
+.\.build\dotnet\dotnet.exe publish src\DesktopBox.App -c Release -r win-x64 --self-contained true -o output\local-build
+```
+
+本地 SDK 不加入 Git；其他开发机可使用 .NET 10 SDK。正式发布包不覆盖历史版本。软件配置只在本机用户目录保存。

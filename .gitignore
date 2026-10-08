@@ -430,3 +430,12 @@ FodyWeavers.xsd
 
 # Project-local .NET SDK and Windows build tools
 .build/
+
+# Local release binaries (instructions and verification stay versioned)
+releases/**
+!releases/
+!releases/v*/
+!releases/v*/使用说明.md
+!releases/v*/验证记录.md
+!releases/v*/SHA256SUMS.txt
+output/
