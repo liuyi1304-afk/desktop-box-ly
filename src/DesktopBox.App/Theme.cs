@@ -20,6 +20,8 @@ internal static class Theme {
  """);
  internal static void Menu(ContextMenu menu){menu.Background=new SolidColorBrush(Color.FromRgb(36,40,48));menu.Foreground=Text;menu.BorderBrush=new SolidColorBrush(Color.FromArgb(40,255,255,255));menu.Padding=new Thickness(5);menu.Resources.Add(typeof(MenuItem),Read("""
  <Style xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" TargetType="MenuItem"><Setter Property="Foreground" Value="#E4E7EC"/><Setter Property="Padding" Value="12,8"/><Setter Property="Template"><Setter.Value><ControlTemplate TargetType="MenuItem"><Border x:Name="Surface" CornerRadius="5" Background="Transparent" Padding="{TemplateBinding Padding}"><ContentPresenter ContentSource="Header"/></Border><ControlTemplate.Triggers><Trigger Property="IsHighlighted" Value="True"><Setter TargetName="Surface" Property="Background" Value="#20FFFFFF"/></Trigger></ControlTemplate.Triggers></ControlTemplate></Setter.Value></Setter></Style>
- """));}
+ """));menu.Template=(ControlTemplate)XamlReader.Parse("""
+ <ControlTemplate xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" TargetType="ContextMenu"><Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1" CornerRadius="8" Padding="{TemplateBinding Padding}"><ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" CanContentScroll="True"><ItemsPresenter/></ScrollViewer></Border></ControlTemplate>
+ """);}
 }
 
