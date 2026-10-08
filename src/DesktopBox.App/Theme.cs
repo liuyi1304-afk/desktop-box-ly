@@ -7,6 +7,12 @@ internal static class Theme {
  internal static readonly Brush Text=new SolidColorBrush(Color.FromRgb(228,231,236));
  internal static readonly Brush Muted=new SolidColorBrush(Color.FromRgb(158,165,177));
  static Style Read(string xml)=>(Style)XamlReader.Parse(xml);
+ internal static Style ColumnHeaderStyle=>Read("""
+ <Style xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" TargetType="GridViewColumnHeader"><Setter Property="Foreground" Value="#E4E7EC"/><Setter Property="Background" Value="Transparent"/><Setter Property="HorizontalContentAlignment" Value="Left"/><Setter Property="Padding" Value="5,8"/><Setter Property="Template"><Setter.Value><ControlTemplate TargetType="GridViewColumnHeader"><Border Background="{TemplateBinding Background}" BorderBrush="#25FFFFFF" BorderThickness="0,0,0,1" Padding="{TemplateBinding Padding}"><ContentPresenter VerticalAlignment="Center" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"/></Border></ControlTemplate></Setter.Value></Setter></Style>
+ """);
+ internal static ControlTemplate DetailsTemplate=>(ControlTemplate)XamlReader.Parse("""
+ <ControlTemplate xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" TargetType="ListView"><DockPanel Background="Transparent"><GridViewHeaderRowPresenter DockPanel.Dock="Top" Columns="{Binding View.Columns, RelativeSource={RelativeSource TemplatedParent}}" ColumnHeaderContainerStyle="{Binding View.ColumnHeaderContainerStyle, RelativeSource={RelativeSource TemplatedParent}}"/><ScrollViewer VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Disabled" CanContentScroll="True" Focusable="False"><ItemsPresenter/></ScrollViewer></DockPanel></ControlTemplate>
+ """);
  internal static Style ButtonStyle=>Read("""
  <Style xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" TargetType="Button">
  <Setter Property="Foreground" Value="#E4E7EC"/><Setter Property="Background" Value="#10FFFFFF"/><Setter Property="BorderBrush" Value="#18FFFFFF"/><Setter Property="BorderThickness" Value="1"/><Setter Property="Cursor" Value="Hand"/>
@@ -24,6 +30,3 @@ internal static class Theme {
  <ControlTemplate xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" TargetType="ContextMenu"><Grid ClipToBounds="True"><Image x:Name="Frost" Stretch="Fill" IsHitTestVisible="False"/><Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1" CornerRadius="8" Padding="{TemplateBinding Padding}"><ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" CanContentScroll="True"><ItemsPresenter/></ScrollViewer></Border></Grid></ControlTemplate>
  """);MenuGlass.Attach(menu,settings??(()=>new Settings()));}
 }
-
-
-
