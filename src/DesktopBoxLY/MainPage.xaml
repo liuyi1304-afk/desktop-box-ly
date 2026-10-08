@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Page
+    x:Class="DesktopBoxLY.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:models="using:DesktopBoxLY.Models">
+    <Grid Padding="28" RowSpacing="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid ColumnSpacing="18">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <StackPanel Spacing="5">
+                <TextBlock Text="桌面盒子" Style="{StaticResource TitleTextBlockStyle}" />
+                <TextBlock Text="把常用文件夹放进独立、可移动的桌面窗口。" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+            </StackPanel>
+            <Button Grid.Column="1" Content="＋ 新建盒子" Click="AddBox_Click" VerticalAlignment="Center" />
+        </Grid>
+        <TextBlock Grid.Row="1" Text="我的盒子" Style="{StaticResource SubtitleTextBlockStyle}" />
+        <ListView x:Name="BoxesList" Grid.Row="2" SelectionMode="None">
+            <ListView.ItemTemplate>
+                <DataTemplate x:DataType="models:BoxConfig">
+                    <Border Padding="16" Margin="0,0,0,10" CornerRadius="10" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}">
+                        <Grid ColumnSpacing="16">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Spacing="4" VerticalAlignment="Center">
+                                <TextBlock Text="{x:Bind Name}" FontSize="17" FontWeight="SemiBold" />
+                                <TextBlock Text="{x:Bind FolderPath}" Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextTrimming="CharacterEllipsis" />
+                            </StackPanel>
+                            <Button Grid.Column="1" Content="打开盒子" Tag="{x:Bind Id}" Click="OpenBox_Click" VerticalAlignment="Center" />
+                            <Button Grid.Column="2" Content="移除" Tag="{x:Bind Id}" Click="RemoveBox_Click" VerticalAlignment="Center" />
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+        <TextBlock x:Name="EmptyHint" Grid.Row="2" Text="还没有盒子。新建一个并选择要映射的文件夹。" Foreground="{ThemeResource TextFillColorSecondaryBrush}" VerticalAlignment="Center" HorizontalAlignment="Center" Visibility="Collapsed" />
+        <TextBlock Grid.Row="3" Text="文件只在本机显示。当前版本支持浏览、打开和在资源管理器中定位，不会自动移动或删除文件。" FontSize="12" Foreground="{ThemeResource TextFillColorTertiaryBrush}" TextWrapping="Wrap" />
+    </Grid>
+</Page>

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Window
+    x:Class="DesktopBoxLY.BoxWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:models="using:DesktopBoxLY.Models"
+    Title="桌面盒子">
+    <Window.SystemBackdrop>
+        <DesktopAcrylicBackdrop />
+    </Window.SystemBackdrop>
+    <Grid x:Name="RootPanel" Padding="16" RowSpacing="12" Background="{ThemeResource AcrylicInAppFillColorDefaultBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid ColumnSpacing="10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <StackPanel Spacing="2">
+                <TextBlock x:Name="BoxTitle" FontSize="18" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" />
+                <TextBlock x:Name="FolderLabel" FontSize="11" Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextTrimming="CharacterEllipsis" />
+            </StackPanel>
+            <Button Grid.Column="1" Content="↻" ToolTipService.ToolTip="刷新" Click="Refresh_Click" />
+            <Button Grid.Column="2" Content="⋯" ToolTipService.ToolTip="在资源管理器中打开此文件夹" Click="OpenFolder_Click" />
+        </Grid>
+        <Grid Grid.Row="1" ColumnSpacing="8">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Button x:Name="UpButton" Content="↑" ToolTipService.ToolTip="返回上一级" Click="Up_Click" />
+            <TextBlock x:Name="CurrentPathLabel" Grid.Column="1" VerticalAlignment="Center" FontSize="12" TextTrimming="CharacterEllipsis" />
+        </Grid>
+        <ListView x:Name="EntriesList" Grid.Row="2" SelectionMode="Single" DoubleTapped="EntriesList_DoubleTapped">
+            <ListView.ItemTemplate>
+                <DataTemplate x:DataType="models:FileEntry">
+                    <Grid Padding="4,7" ColumnSpacing="8">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Orientation="Horizontal" Spacing="9" VerticalAlignment="Center">
+                            <TextBlock Text="{x:Bind IsDirectory, Converter={StaticResource DirectoryGlyphConverter}}" />
+                            <StackPanel>
+                                <TextBlock Text="{x:Bind Name}" TextTrimming="CharacterEllipsis" />
+                                <TextBlock Text="{x:Bind Detail}" FontSize="10" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                            </StackPanel>
+                        </StackPanel>
+                        <Button Grid.Column="1" Content="显示" Tag="{x:Bind FullPath}" Click="Reveal_Click" VerticalAlignment="Center" />
+                    </Grid>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+        <Grid Grid.Row="3" ColumnSpacing="8">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <TextBlock Text="透明度" FontSize="11" VerticalAlignment="Center" />
+            <Slider x:Name="OpacitySlider" Grid.Column="1" Minimum="0.55" Maximum="1" Value="0.94" StepFrequency="0.05" ValueChanged="OpacitySlider_ValueChanged" />
+            <TextBlock x:Name="CountLabel" Grid.Column="2" FontSize="11" VerticalAlignment="Center" />
+        </Grid>
+    </Grid>
+</Window>

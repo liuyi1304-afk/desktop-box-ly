@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "DesktopBoxLY (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "DesktopBoxLY (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}
