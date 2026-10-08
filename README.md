@@ -1,8 +1,8 @@
-# Desktop Box LY
+# 桌面盒子
 
 Windows 11 桌面收纳盒第一版，当前版本 **v0.1.4 实验版**。
 
-直接运行 `releases/v0.1.4/DesktopBox.App.exe`，保留同目录配套文件。无需另装 .NET 或 GitHub Desktop。
+从 [正式发布页](https://github.com/liuyi1304-afk/desktop-box-ly/releases/tag/v0.1.4) 下载 Windows x64 压缩包，完整解压后运行 `DesktopBox.App.exe`，保留同目录配套文件。无需另装 .NET 或 GitHub Desktop。
 
 - 普通盒子：虚拟文件入口，原文件位置与属性不变；指定桌面图标通过屏幕外位置实验性隐藏。
 - 映射盒子：显示真实文件夹并同步刷新；拖入移动真实文件，同名冲突拒绝覆盖。
@@ -20,6 +20,7 @@ Windows 11 桌面收纳盒第一版，当前版本 **v0.1.4 实验版**。
 ```
 
 本地 SDK 不加入 Git；其他开发机可使用 .NET 10 SDK。正式发布包不覆盖历史版本。软件配置只在本机用户目录保存。
+
 
 
 
