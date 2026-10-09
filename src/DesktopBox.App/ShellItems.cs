@@ -30,7 +30,8 @@ internal static class ShellItems {
  internal static string DisplayName(string path){if(!IsVirtual(path))return Path.GetFileName(path);if(names.TryGetValue(path,out var cached))return cached;var iid=new Guid("43826D1E-E718-42EE-BC55-A1E261C37BFE");if(SHCreateItemFromParsingName(path,IntPtr.Zero,ref iid,out var item)<0)return "系统入口";try{return names[path]=NameOf(item,0);}finally{Marshal.Release(item);}}
  internal static bool Exists(string path)=>IsVirtual(path)?SHExists(path):File.Exists(path)||Directory.Exists(path);
  static bool SHExists(string path){if(SHParseDisplayName(path,IntPtr.Zero,out var pidl,0,out _) <0)return false;Marshal.FreeCoTaskMem(pidl);return true;}
- internal static bool CanRead(System.Windows.IDataObject data)=>data.GetDataPresent(DragFormat,false)||data.GetDataPresent(DataFormats.FileDrop)||data.GetDataPresent(FileGroupDescriptorW,false);
+ internal static bool HasVirtualFiles(System.Windows.IDataObject data)=>data.GetDataPresent(FileGroupDescriptorW,false);
+ internal static bool CanRead(System.Windows.IDataObject data)=>data.GetDataPresent(DragFormat,false)||data.GetDataPresent(DataFormats.FileDrop)||HasVirtualFiles(data);
  internal static DataObject CreateData(IReadOnlyList<string> paths){var pidls=new List<byte[]>();foreach(var path in paths){Marshal.ThrowExceptionForHR(SHParseDisplayName(path,IntPtr.Zero,out var ptr,0,out _));try{int size=0;while(true){int part=(ushort)Marshal.ReadInt16(ptr,size);if(part==0){size+=2;break;}if(part<2||size+part>1024*1024)throw new IOException("系统入口数据无效");size+=part;}var bytes=new byte[size];Marshal.Copy(ptr,bytes,0,size);pidls.Add(bytes);}finally{Marshal.FreeCoTaskMem(ptr);}}int header=4+(paths.Count+1)*4;using var buffer=new MemoryStream();using var writer=new BinaryWriter(buffer);writer.Write(paths.Count);writer.Write(header);int offset=header+2;foreach(var pidl in pidls){writer.Write(offset);offset+=pidl.Length;}writer.Write((ushort)0);foreach(var pidl in pidls)writer.Write(pidl);var data=new DataObject();data.SetData(DragFormat,new MemoryStream(buffer.ToArray()));if(paths.All(x=>!IsVirtual(x)))data.SetData(DataFormats.FileDrop,paths.ToArray());return data;}
  internal static IReadOnlyList<string> Read(System.Windows.IDataObject data){
   var virtualFiles=ReadVirtualFiles(data);if(virtualFiles!=null)return virtualFiles;
@@ -42,7 +43,7 @@ internal static class ShellItems {
   return data.GetData(DataFormats.FileDrop) is string[] paths?paths.Distinct(StringComparer.OrdinalIgnoreCase).ToArray():[];
  }
  static IReadOnlyList<string>? ReadVirtualFiles(System.Windows.IDataObject data){
-  if(!data.GetDataPresent(FileGroupDescriptorW,false))return null;
+  if(!HasVirtualFiles(data))return null;
   if(data is not ComData native)throw new IOException("来源应用提供了虚拟文件，但无法读取文件数据。");
   var format=unchecked((short)RegisterClipboardFormat(FileGroupDescriptorW));if(format==0)throw new IOException("无法识别虚拟文件格式。");
   var descriptorRequest=new ComTypes.FORMATETC{cfFormat=format,dwAspect=ComTypes.DVASPECT.DVASPECT_CONTENT,lindex=-1,tymed=ComTypes.TYMED.TYMED_HGLOBAL};
@@ -74,3 +75,4 @@ internal static class ShellItems {
  internal static IReadOnlyList<string> Parse(byte[] bytes){if(bytes.Length<8)throw new IOException("无效的系统入口拖入数据");uint count=BitConverter.ToUInt32(bytes,0);if(count>4096||4L+(count+1L)*4>bytes.Length)throw new IOException("无效的系统入口数量");int PidlOffset(int index){uint raw=BitConverter.ToUInt32(bytes,4+index*4);if(raw<4L+(count+1L)*4||raw>bytes.Length-2)throw new IOException("无效的系统入口偏移");int offset=(int)raw,cursor=offset;while(true){if(cursor>bytes.Length-2)throw new IOException("系统入口数据不完整");int size=BitConverter.ToUInt16(bytes,cursor);if(size==0)break;if(size<2||size>bytes.Length-cursor)throw new IOException("无效的系统入口长度");cursor+=size;}return offset;}
   int parentOffset=PidlOffset(0);var children=Enumerable.Range(1,(int)count).Select(PidlOffset).ToArray();var pinned=GCHandle.Alloc(bytes,GCHandleType.Pinned);try{var root=pinned.AddrOfPinnedObject();var result=new List<string>();foreach(var offset in children){var full=ILCombine(root+parentOffset,root+offset);if(full==IntPtr.Zero)throw new OutOfMemoryException();try{uint kind=0x80058000;if(SHGetNameFromIDList(full,kind,out var text)<0)Marshal.ThrowExceptionForHR(SHGetNameFromIDList(full,0x80028000,out text));try{var id=Marshal.PtrToStringUni(text);if(!string.IsNullOrEmpty(id))result.Add(id);}finally{Marshal.FreeCoTaskMem(text);}}finally{Marshal.FreeCoTaskMem(full);}}return result.Distinct(StringComparer.OrdinalIgnoreCase).ToArray();}finally{pinned.Free();}}
 }
+

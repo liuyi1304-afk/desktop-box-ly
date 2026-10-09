@@ -1,0 +1,45 @@
+name: Build and publish DesktopBox release
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    if: startsWith(github.event.head_commit.message, 'Release DesktopBox ')
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+      - name: Build release package
+        shell: pwsh
+        run: |
+          [xml]$project = Get-Content src/DesktopBox.App/DesktopBox.App.csproj -Raw
+          $version = $project.Project.PropertyGroup.Version
+          $tag = "v$version"
+          $output = 'output/publish'
+          dotnet publish src/DesktopBox.App/DesktopBox.App.csproj -c Release -r win-x64 --self-contained true -o $output --source https://api.nuget.org/v3/index.json
+          if ($LASTEXITCODE -ne 0) { throw 'dotnet publish failed' }
+          $notes = "docs/${version}正式版说明.md"
+          if (-not (Test-Path -LiteralPath $notes)) { throw "Release notes not found: $notes" }
+          Copy-Item -LiteralPath $notes -Destination "$output/使用说明.md"
+          $zip = "DesktopBox-$version-win-x64.zip"
+          Compress-Archive -Path "$output/*" -DestinationPath $zip -Force
+          gh api --method POST "repos/$env:GITHUB_REPOSITORY/git/refs" -f "ref=refs/tags/$tag" -f "sha=$env:GITHUB_SHA"
+          if ($LASTEXITCODE -ne 0) { throw "Could not create tag $tag" }
+      - name: Publish GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: pwsh
+        run: |
+          [xml]$project = Get-Content src/DesktopBox.App/DesktopBox.App.csproj -Raw
+          $version = $project.Project.PropertyGroup.Version
+          $tag = "v$version"
+          gh release create $tag "DesktopBox-$version-win-x64.zip" --verify-tag --title "桌面盒子 $version" --notes-file "docs/${version}正式版说明.md"
+
