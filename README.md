@@ -1,8 +1,8 @@
 # 桌面盒子
 
-Windows 11 桌面收纳盒，正式版 **v1.0.0**。
+Windows 11 桌面收纳盒，正式版 **v1.0.5**。
 
-下载：[Windows x64 正式版](https://github.com/liuyi1304-afk/desktop-box-ly/releases/latest/download/DesktopBox-1.0.0-win-x64.zip)，完整解压后运行 `DesktopBox.App.exe`，无需另装 .NET。
+下载：[Windows x64 正式版](https://github.com/liuyi1304-afk/desktop-box-ly/releases/latest/download/DesktopBox-1.0.5-win-x64.zip)，完整解压后运行 `DesktopBox.App.exe`，无需另装 .NET。
 
 - 普通盒子：虚拟文件入口，原文件位置与属性不变；桌面替代层实验性隐藏已收纳项，退出恢复系统图标层。
 - 映射盒子：显示真实文件夹并同步刷新；拖入移动真实文件，同名冲突拒绝覆盖。
